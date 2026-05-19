@@ -1,6 +1,8 @@
 const facilityRepository = require("../facilities/facility.rapository");
 const bookingRepository = require("./booking.rapository");
 
+const CANCELLABLE_STATUSES = ["pending", "confirmed"];
+
 function validateBookingPayload(body) {
   const required = ["facility_id", "booking_date", "time_slot", "hours"];
   const missing = required.filter((field) => body[field] === undefined || body[field] === "");
@@ -64,7 +66,27 @@ async function createBooking(body, userEmail) {
   return created;
 }
 
+async function cancelBooking(id, userEmail) {
+  const booking = await bookingRepository.findById(id);
+
+  if (!booking) {
+    throw new AppError("Booking not found", 404);
+  }
+
+  if (booking.user_email !== userEmail) {
+    throw new AppError("You are not allowed to cancel this booking", 403);
+  }
+
+  if (!CANCELLABLE_STATUSES.includes(booking.status)) {
+    throw new AppError(`Booking cannot be cancelled while status is ${booking.status}`, 400);
+  }
+
+  const updated = await bookingRepository.updateStatusById(id, "cancelled");
+  return updated;
+}
+
 module.exports = {
   getMyBookings,
   createBooking,
+  cancelBooking,
 };

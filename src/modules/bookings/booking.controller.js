@@ -16,7 +16,16 @@ const createBooking = asyncHandler(async (req, res) => {
   });
 });
 
+const cancelBooking = asyncHandler(async (req, res) => {
+  const booking = await bookingService.cancelBooking(req.params.id, req.user.email);
+  sendSuccess(res, {
+    message: "Booking cancelled successfully",
+    data: booking,
+  });
+});
+
 module.exports = {
   getMyBookings,
   createBooking,
+  cancelBooking,
 };

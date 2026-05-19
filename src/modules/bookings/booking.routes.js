@@ -8,5 +8,6 @@ router.use(authenticate);
 
 router.get("/mine", bookingController.getMyBookings);
 router.post("/", bookingController.createBooking);
+router.patch("/:id/cancel", bookingController.cancelBooking);
 
 module.exports = router;
