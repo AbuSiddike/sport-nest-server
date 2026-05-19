@@ -12,6 +12,17 @@ const REQUIRED_CREATE_FIELDS = [
   'description',
 ];
 
+function parseTypes(typesQuery) {
+  if (!typesQuery) return undefined;
+
+  const types = String(typesQuery)
+    .split(",")
+    .map((type) => type.trim())
+    .filter(Boolean);
+
+  return types.length ? types : undefined;
+}
+
 function validateCreatePayload(body) {
   const missing = REQUIRED_CREATE_FIELDS.filter(
     (field) => body[field] === undefined || body[field] === ''
@@ -62,7 +73,15 @@ async function getFeaturedFacilities() {
   return facilityRepository.findFeatured(6);
 }
 
+async function listFacilities(query) {
+  const search = query.search?.trim();
+  const types = parseTypes(query.types);
+
+  return facilityRepository.findAll({ search, types });
+}
+
 module.exports = {
   createFacility,
   getFeaturedFacilities,
+  listFacilities,
 };
