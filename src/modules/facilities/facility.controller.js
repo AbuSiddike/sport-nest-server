@@ -12,6 +12,11 @@ const getFeaturedFacilities = asyncHandler(async (req, res) => {
   sendSuccess(res, { data: facilities });
 });
 
+const getFacilityById = asyncHandler(async (req, res) => {
+  const facility = await facilityService.getFacilityById(req.params.id);
+  sendSuccess(res, { data: facility });
+});
+
 const createFacility = asyncHandler(async (req, res) => {
   const facility = await facilityService.createFacility(req.body, req.user.email);
   sendSuccess(res, {
@@ -24,5 +29,6 @@ const createFacility = asyncHandler(async (req, res) => {
 module.exports = {
   createFacility,
   getFeaturedFacilities,
-  listFacilities
+  listFacilities,
+  getFacilityById
 };

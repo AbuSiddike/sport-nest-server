@@ -80,8 +80,19 @@ async function listFacilities(query) {
   return facilityRepository.findAll({ search, types });
 }
 
+async function getFacilityById(id) {
+  const facility = await facilityRepository.findById(id);
+
+  if (!facility) {
+    throw new AppError("Facility not found", 404);
+  }
+
+  return facility;
+}
+
 module.exports = {
   createFacility,
   getFeaturedFacilities,
   listFacilities,
+  getFacilityById,
 };

@@ -6,6 +6,8 @@ const router = express.Router();
 
 router.get("/featured", facilityController.getFeaturedFacilities);
 router.get("/", facilityController.listFacilities);
+router.get("/:id", facilityController.getFacilityById);
+
 router.post("/", authenticate, facilityController.createFacility);
 
 module.exports = router;
