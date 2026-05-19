@@ -11,5 +11,6 @@ router.get("/:id", facilityController.getFacilityById);
 
 router.post("/", authenticate, facilityController.createFacility);
 router.patch("/:id", authenticate, facilityController.updateFacility);
+router.delete("/:id", authenticate, facilityController.deleteFacility);
 
 module.exports = router;

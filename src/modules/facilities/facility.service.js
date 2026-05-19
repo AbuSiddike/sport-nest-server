@@ -34,6 +34,15 @@ function parseTypes(typesQuery) {
   return types.length ? types : undefined;
 }
 
+function pickFields(source, fields) {
+  return fields.reduce((result, field) => {
+    if (source[field] !== undefined) {
+      result[field] = source[field];
+    }
+    return result;
+  }, {});
+}
+
 function validateCreatePayload(body) {
   const missing = REQUIRED_CREATE_FIELDS.filter(
     (field) => body[field] === undefined || body[field] === "",
@@ -56,6 +65,16 @@ function validateCreatePayload(body) {
 
   if (Number.isNaN(capacity) || capacity <= 0) {
     throw new AppError("capacity must be a positive number", 400);
+  }
+}
+
+function assertOwner(facility, userEmail) {
+  if (!facility) {
+    throw new AppError("Facility not found", 404);
+  }
+
+  if (facility.owner_email !== userEmail) {
+    throw new AppError("You are not allowed to modify this facility", 403);
   }
 }
 
@@ -141,6 +160,19 @@ async function updateFacility(id, body, ownerEmail) {
   return updated;
 }
 
+async function deleteFacility(id, ownerEmail) {
+  const existing = await facilityRepository.findById(id);
+  assertOwner(existing, ownerEmail);
+
+  const deleted = await facilityRepository.deleteById(id);
+
+  if (!deleted) {
+    throw new AppError("Facility not found", 404);
+  }
+
+  return { id };
+}
+
 module.exports = {
   createFacility,
   getFeaturedFacilities,
@@ -148,4 +180,5 @@ module.exports = {
   getFacilityById,
   getMyFacilities,
   updateFacility,
+  deleteFacility,
 };

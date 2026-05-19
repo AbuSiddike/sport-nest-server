@@ -39,11 +39,17 @@ const updateFacility = asyncHandler(async (req, res) => {
   });
 });
 
+const deleteFacility = asyncHandler(async (req, res) => {
+  await facilityService.deleteFacility(req.params.id, req.user.email);
+  sendSuccess(res, { message: "Facility deleted successfully" });
+});
+
 module.exports = {
   createFacility,
   getFeaturedFacilities,
   listFacilities,
   getFacilityById,
   getMyFacilities,
-  updateFacility
+  updateFacility,
+  deleteFacility
 };
