@@ -10,5 +10,6 @@ router.get("/mine", authenticate, facilityController.getMyFacilities);
 router.get("/:id", facilityController.getFacilityById);
 
 router.post("/", authenticate, facilityController.createFacility);
+router.patch("/:id", authenticate, facilityController.updateFacility);
 
 module.exports = router;

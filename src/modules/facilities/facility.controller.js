@@ -31,10 +31,19 @@ const createFacility = asyncHandler(async (req, res) => {
   });
 });
 
+const updateFacility = asyncHandler(async (req, res) => {
+  const facility = await facilityService.updateFacility(req.params.id, req.body, req.user.email);
+  sendSuccess(res, {
+    message: "Facility updated successfully",
+    data: facility,
+  });
+});
+
 module.exports = {
   createFacility,
   getFeaturedFacilities,
   listFacilities,
   getFacilityById,
-  getMyFacilities
+  getMyFacilities,
+  updateFacility
 };

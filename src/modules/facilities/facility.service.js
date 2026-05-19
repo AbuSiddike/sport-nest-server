@@ -12,6 +12,17 @@ const REQUIRED_CREATE_FIELDS = [
   "description",
 ];
 
+const UPDATABLE_FIELDS = [
+  "name",
+  "facility_type",
+  "image",
+  "location",
+  "price_per_hour",
+  "capacity",
+  "available_slots",
+  "description",
+];
+
 function parseTypes(typesQuery) {
   if (!typesQuery) return undefined;
 
@@ -94,10 +105,47 @@ async function getMyFacilities(ownerEmail) {
   return facilityRepository.findByOwnerEmail(ownerEmail);
 }
 
+async function updateFacility(id, body, ownerEmail) {
+  const existing = await facilityRepository.findById(id);
+  assertOwner(existing, ownerEmail);
+
+  const updates = pickFields(body, UPDATABLE_FIELDS);
+
+  if (updates.price_per_hour !== undefined) {
+    updates.price_per_hour = Number(updates.price_per_hour);
+    if (Number.isNaN(updates.price_per_hour) || updates.price_per_hour <= 0) {
+      throw new AppError("price_per_hour must be a positive number", 400);
+    }
+  }
+
+  if (updates.capacity !== undefined) {
+    updates.capacity = Number(updates.capacity);
+    if (Number.isNaN(updates.capacity) || updates.capacity <= 0) {
+      throw new AppError("capacity must be a positive number", 400);
+    }
+  }
+
+  if (updates.available_slots !== undefined) {
+    if (!Array.isArray(updates.available_slots) || !updates.available_slots.length) {
+      throw new AppError("available_slots must be a non-empty array", 400);
+    }
+  }
+
+  if (!Object.keys(updates).length) {
+    throw new AppError("No valid fields provided for update", 400);
+  }
+
+  updates.updated_at = new Date();
+
+  const updated = await facilityRepository.updateById(id, updates);
+  return updated;
+}
+
 module.exports = {
   createFacility,
   getFeaturedFacilities,
   listFacilities,
   getFacilityById,
   getMyFacilities,
+  updateFacility,
 };
