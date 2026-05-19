@@ -1,3 +1,5 @@
+const dotenv = require("dotenv");
+dotenv.config();
 const { jwtVerify, createRemoteJWKSet } = require("jose-cjs");
 const AppError = require("../utils/AppError");
 
