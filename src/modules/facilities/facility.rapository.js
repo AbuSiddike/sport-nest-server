@@ -64,6 +64,13 @@ async function deleteById(id) {
   return result.deletedCount > 0;
 }
 
+async function findByIds(ids) {
+  const objectIds = ids.map((id) => toObjectId(id, "facility id"));
+  return getCollection()
+    .find({ _id: { $in: objectIds } })
+    .toArray();
+}
+
 async function incrementBookingCount(facilityId, amount = 1) {
   await getCollection().updateOne(
     { _id: new ObjectId(facilityId) },
@@ -75,6 +82,7 @@ module.exports = {
   findAll,
   findFeatured,
   findById,
+  findByIds,
   findByOwnerEmail,
   insertOne,
   updateById,
