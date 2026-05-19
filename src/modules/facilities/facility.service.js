@@ -1,5 +1,5 @@
 const AppError = require('../../utils/AppError');
-const facilityRapository = require('./facility.rapository');
+const facilityRepository = require("./facility.rapository");
 
 const REQUIRED_CREATE_FIELDS = [
   'name',
@@ -55,9 +55,14 @@ async function createFacility(body, ownerEmail) {
     updated_at: new Date(),
   };
 
-  return facilityRapository.insertOne(facility);
+  return facilityRepository.insertOne(facility);
+}
+
+async function getFeaturedFacilities() {
+  return facilityRepository.findFeatured(6);
 }
 
 module.exports = {
   createFacility,
+  getFeaturedFacilities,
 };
