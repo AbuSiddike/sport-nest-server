@@ -1,5 +1,6 @@
 const AppError = require("../../utils/AppError");
-const facilityRepository = require("./facility.rapository");
+const bookingRepository = require("../bookings/booking.repository");
+const facilityRepository = require("./facility.repository");
 
 const REQUIRED_CREATE_FIELDS = [
   "name",
@@ -164,7 +165,9 @@ async function deleteFacility(id, ownerEmail) {
   const existing = await facilityRepository.findById(id);
   assertOwner(existing, ownerEmail);
 
-  const deleted = await facilityRepository.deleteById(id);
+  const deleted = await facilityRepository
+    .deleteById(id)
+    .then(() => bookingRepository.deleteManyByFacilityId(existing._id));
 
   if (!deleted) {
     throw new AppError("Facility not found", 404);

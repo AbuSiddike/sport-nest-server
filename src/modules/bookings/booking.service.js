@@ -1,5 +1,5 @@
-const facilityRepository = require("../facilities/facility.rapository");
-const bookingRepository = require("./booking.rapository");
+const facilityRepository = require("../facilities/facility.repository");
+const bookingRepository = require("./booking.repository");
 
 const CANCELLABLE_STATUSES = ["pending", "confirmed"];
 
@@ -22,15 +22,7 @@ function validateBookingPayload(body) {
 async function getMyBookings(userEmail) {
   const bookings = await bookingRepository.findByUserEmail(userEmail);
 
-  const facilityIds = [...new Set(bookings.map((b) => String(b.facility_id)))];
-  const facilities = await facilityRepository.findByIds(facilityIds);
-
-  const facilityMap = new Map(facilities.map((facility) => [String(facility._id), facility]));
-
-  return bookings.map((booking) => ({
-    ...booking,
-    facility_name: facilityMap.get(String(booking.facility_id))?.name || null,
-  }));
+  return bookings;
 }
 
 async function createBooking(body, userEmail) {
